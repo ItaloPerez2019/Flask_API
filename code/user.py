@@ -6,9 +6,35 @@ class User:
         self.username = username
         self.password = password
 
-
-    def find_by_user(self,username):
+    @classmethod
+    def find_by_username(cls,username):
+        # find_by_user(self,username):
         connection =sqlite3.connect('data.db')
         cursor = connection.cursor()
 
         query = "SELECT * FROM users WHERE username=?"
+        result = cursor.execute(query,(username,))
+        row = result.fetchone()
+        if row:
+            user = cls(*row)
+            #user = User(row[0],row[1],row[2])
+        else:
+            user = None
+        connection.close()
+        return user
+
+    @classmethod
+    def find_by_user_id(cls,_id):
+        connection =sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM users WHERE id=?"
+        result = cursor.execute(query,(_id,))
+        row = resul.fetchone()
+        if row:
+            user = cls(*row)
+            #user = User(row[0],row[1],row[2])
+        else:
+            user = None
+        connection.close()
+        return user

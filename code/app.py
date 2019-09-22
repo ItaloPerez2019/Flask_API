@@ -9,34 +9,34 @@ app = Flask(__name__)
 app.secret_key = 'italo'
 api =Api(app)
 
+
 jwt = JWT(app, authenticate , identity) # /auth
 
 items = []
 
 class Item(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument('price',
-      @jwt_required()
+    @jwt_required()
     def get(self, name):
         item = next(filter(lambda x : x['name'] == name ,items),None)
         return{'item':item}, 200 if item else 404
 
-        type=float,
-            required=True,
-            help="this field cannot be left in blank!"
-        )
-
-
-
     def post(self, name):
+        # parser = reqparse.RequestParser()
+        # parser.add_argument(
+        #     'price',
+        #     type =float,
+        #     required = True,
+        #     help = "This can not be left in blank"
+        # )
         if next(filter(lambda x : x['name'] == name ,items),None)is not None:
             return{"mesage": " An item with name '{}' already exists" .format(name)},400
 
-        data = Item.parser.parse_args()
+        data = parser.parse_args()
 
         item ={'name': name , 'price':data['price']}
         items.append(item)
         return item, 201
+
 
     def delete(self,name):
         global items
@@ -44,9 +44,14 @@ class Item(Resource):
         return {'message': 'item deleted'}
 
     def put(self,name):
-
-        # data = request.get_json()
-        data = Item.parser.parse_args()
+        # parser = reqparse.RequestParser()
+        # parser.add_argument('price',
+        #     type= float,
+        #     required= True,
+        #     help= "This can not be empty"
+        # )
+        # # data = request.get_json()
+        data = parser.parse_args()
         item = next(filter(lambda x: x['name']== name , items),None)
         if item is None:
             #if creating a new item - use price
@@ -56,7 +61,6 @@ class Item(Resource):
             # if updating the item ,will use the  entire payload
             item.update(data)
         return item
-
 
 
 class ItemList(Resource):
