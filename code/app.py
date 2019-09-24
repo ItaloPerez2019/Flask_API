@@ -4,6 +4,7 @@ from flask_jwt import JWT,jwt_required
 
 
 from security import authenticate,identity
+from user import UserRegister
 
 app = Flask(__name__)
 app.secret_key = 'italo'
@@ -28,10 +29,11 @@ class Item(Resource):
         #     required = True,
         #     help = "This can not be left in blank"
         # )
+        data = parser.parse_args()
+
         if next(filter(lambda x : x['name'] == name ,items),None)is not None:
             return{"mesage": " An item with name '{}' already exists" .format(name)},400
 
-        data = parser.parse_args()
 
         item ={'name': name , 'price':data['price']}
         items.append(item)
@@ -69,5 +71,6 @@ class ItemList(Resource):
 
 api.add_resource(Item,'/item/<string:name>')# http://127.0.0.1.5000/student/italo
 api.add_resource(ItemList,'/items')
+api.add_resource(UserRegister,'/register')
 
 app.run(port=5000, debug=True)
